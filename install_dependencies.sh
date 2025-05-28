@@ -1,0 +1,60 @@
+#!/bin/bash
+set -eu
+
+if [ ! -f "install_dependencies.sh" ]; then
+    echo "Please run this script in the root folder of the repo."
+    exit 1
+fi
+
+# params
+verl_commit=2c179dae234ca65b18ce8d2fe63d5b367910f628
+proj_root=$(pwd)
+
+# push some environment variables
+echo "ROOT=$(pwd)" > .env
+
+# create conda env
+prefix=/tmp/zlu39/.conda_envs/robust_recall
+mkdir -p ${prefix}
+conda create --prefix ${prefix} python==3.10 -y
+ln -s ${prefix} ${HOME}/.conda/envs/tmp_robust_recall
+
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate ${prefix}
+conda env list
+
+################## get verl ####################
+if [ -e "lib/verl" ]; then
+    echo "Verl already downloaded, skipping clone."
+else
+    git clone https://github.com/volcengine/verl.git lib/verl
+fi
+cd lib/verl
+git checkout $verl_commit
+pip3 install -e . --no-cache-dir
+
+# Install the latest stable version of vLLM
+pip3 install vllm==0.8.4 --no-cache-dir
+
+# Install flash-attn
+pip3 install flash-attn --no-build-isolation --no-cache-dir
+cd $proj_root
+
+pip3 freeze --exclude-editable > constraints.txt
+
+################### get doc_cot ####################
+if [ -e "lib/doc_cot" ]; then
+    echo "doc_cot already downloaded, skipping clone."
+else
+    git clone git@github.com:zhichul/doc_cot.git lib/doc_cot
+fi
+
+cd lib/doc_cot
+pip3 install -r requirements.txt -c $proj_root/constraints.txt
+bash scripts/reassemble_bin.sh doc_cot/corpus/indices/olmo-mix-1124-pes2o-ids-to-file.parquet
+echo "\
+PES2O_PATH=/pscratch/sd/z/zlu39/olmo-mix-1124/data/pes2o/
+S2_API_KEY=klTlPNR9qxaTKnP604LdT6TRzThTv21M9JFCI8h1
+PROJECT_ROOT=$(pwd)
+" > .env
+cd $proj_root
