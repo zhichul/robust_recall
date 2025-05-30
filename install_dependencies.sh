@@ -17,7 +17,7 @@ echo "ROOT=$(pwd)" > .env
 prefix=/tmp/zlu39/.conda_envs/robust_recall
 mkdir -p ${prefix}
 conda create --prefix ${prefix} python==3.10 -y
-ln -s ${prefix} ${HOME}/.conda/envs/tmp_robust_recall
+# ln -s ${prefix} ${HOME}/.conda/envs/tmp_robust_recall
 
 source $(conda info --base)/etc/profile.d/conda.sh
 conda activate ${prefix}
@@ -48,15 +48,17 @@ if [ -e "lib/simple_evals" ]; then
 else
     git clone https://github.com/openai/simple-evals.git lib/simple_evals
 fi
-if [ -e "lib/human_eval" ]; then
+if [ -e "lib/human-eval" ]; then
     echo "human-eval already downloaded, skipping clone."
 else
-    git clone https://github.com/openai/human-eval.git lib/human_eval
+    git clone https://github.com/openai/human-eval.git lib/human-eval
 fi
 cd lib
-pip3 install -e human-eval -c $proj_root/constraints.txt
+set +eu
+pip3 install -e human-eval -c $proj_root/constraints.txt --use-pep517
+set -eu
 pip3 install openai anthropic blobfile tabulate -c $proj_root/constraints.txt
-cd $project_root
+cd $proj_root
 
 ################### get doc_cot ####################
 if [ -e "lib/doc_cot" ]; then
