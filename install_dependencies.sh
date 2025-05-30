@@ -54,6 +54,13 @@ else
     git clone https://github.com/openai/human-eval.git lib/human-eval
 fi
 cd lib
+cd simple_evals
+git checkout 3ec4e9b5ae3931a1858580e2fd3ce80c7fcbe1d9
+git apply ../patches/simple_evals_chat_base_url.patch
+cd ..
+cd human-eval
+git checkout 6d43fb980f9fee3c892a914eda09951f772ad10d
+cd ..
 set +eu
 pip3 install -e human-eval -c $proj_root/constraints.txt --use-pep517
 set -eu

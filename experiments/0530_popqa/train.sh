@@ -69,7 +69,7 @@ done
 split=split0
 project_name=rl4r
 model_name=$(basename "$model_path" | sed 's/[^a-zA-Z0-9]/_/g')
-experiment_name="exp_dapo_model_${model_name}_bs${batch_size}_lr${lr}_roll${n_rollout}_p${max_prompt_length}_r${max_response_length}_rwd${reward_fn}_ent${entropy_coeff}_rt${rollout_temp}_d${split}"
+experiment_name="popqa_exp_dapo_model_${model_name}_bs${batch_size}_lr${lr}_roll${n_rollout}_p${max_prompt_length}_r${max_response_length}_rwd${reward_fn}_ent${entropy_coeff}_rt${rollout_temp}_d${split}"
 
 # Output results
 echo "ngpus: $ngpus"
@@ -105,7 +105,7 @@ export WANDB_API_KEY=8a464cf7b440ea91becb29da1874822e4f5273ed
 
 set +eu
 source $(conda info --base)/etc/profile.d/conda.sh
-conda activate tmp-verl-sc
+conda activate /tmp/zlu39/.conda_envs/robust_recall/
 set -eu
 
 adv_estimator=grpo
@@ -161,7 +161,7 @@ infer_ppo_max_token_len=$((max_prompt_length + max_response_length))
 
 TRAIN_FILE="['data/processed/${split}/0_to_1000/train.parquet', 'data/processed/${split}/1000_to_10000/train.parquet', 'data/processed/${split}/10000_to_100000/train.parquet', 'data/processed/${split}/100000_to_inf/train.parquet']"
 TEST_FILE="['data/processed/${split}/0_to_1000/dev.parquet', 'data/processed/${split}/1000_to_10000/dev.parquet', 'data/processed/${split}/10000_to_100000/dev.parquet', 'data/processed/${split}/100000_to_inf/dev.parquet']"
-export PYTHONPATH=$PYTHONPATH:$(realpath ../../../lib/verl)
+export PYTHONPATH=$PYTHONPATH:$(realpath ../../lib/verl)
 export HYDRA_FULL_ERROR=1
 python3 -u -m recipe.dapo.main_dapo \
     data.train_files="${TRAIN_FILE}" \
@@ -238,4 +238,5 @@ python3 -u -m recipe.dapo.main_dapo \
     trainer.resume_mode=${resume_mode} \
     custom_reward_function.path=${reward_fn}.py \
     trainer.log_val_generations=${log_val_n} \
+    hydra.searchpath="['file://$(realpath ../../lib/verl)/verl/trainer/config']" \
     > logs/${experiment_name}.out 2> logs/${experiment_name}.err

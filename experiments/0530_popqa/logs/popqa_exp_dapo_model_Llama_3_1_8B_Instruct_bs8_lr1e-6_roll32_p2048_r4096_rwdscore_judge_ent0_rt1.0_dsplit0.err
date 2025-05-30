@@ -1,0 +1,49 @@
+2025-05-30 10:53:35,458	INFO worker.py:1879 -- Started a local Ray instance. View the dashboard at [1m[32m127.0.0.1:8265 [39m[22m
+[36m(TaskRunner pid=1521260)[0m /tmp/zlu39/robust_recall/lib/verl/verl/utils/tokenizer.py:30: UserWarning: tokenizer.pad_token_id is None. Now set to 128009
+[36m(TaskRunner pid=1521260)[0m   warnings.warn(f"tokenizer.pad_token_id is None. Now set to {tokenizer.eos_token_id}", stacklevel=1)
+[36m(TaskRunner pid=1521260)[0m Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 3595 examples [00:00, 194704.79 examples/s]
+[36m(TaskRunner pid=1521260)[0m Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 2129 examples [00:00, 167813.15 examples/s]
+[36m(TaskRunner pid=1521260)[0m Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 1117 examples [00:00, 120295.73 examples/s]
+[36m(TaskRunner pid=1521260)[0m Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 291 examples [00:00, 48195.16 examples/s]
+[36m(TaskRunner pid=1521260)[0m Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 100 examples [00:00, 19592.23 examples/s]
+[36m(TaskRunner pid=1521260)[0m Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 100 examples [00:00, 18429.21 examples/s]
+[36m(TaskRunner pid=1521260)[0m Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 100 examples [00:00, 19662.03 examples/s]
+[36m(TaskRunner pid=1521260)[0m Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 100 examples [00:00, 19064.15 examples/s]
+[36m(TaskRunner pid=1521260)[0m DeprecationWarning: `ray.state.available_resources_per_node` is a private attribute and access will be removed in a future Ray version.
+[36m(TaskRunner pid=1521260)[0m WARNING:2025-05-30 10:53:46,047:Waiting for register center actor U6LBhA_register_center to be ready. Elapsed time: 0 seconds out of 300 seconds.
+[36m(WorkerDict pid=1526097)[0m /tmp/zlu39/robust_recall/lib/verl/verl/utils/tokenizer.py:30: UserWarning: tokenizer.pad_token_id is None. Now set to 128009
+[36m(WorkerDict pid=1526097)[0m   warnings.warn(f"tokenizer.pad_token_id is None. Now set to {tokenizer.eos_token_id}", stacklevel=1)
+[36m(WorkerDict pid=1526096)[0m /tmp/zlu39/robust_recall/lib/verl/verl/utils/tokenizer.py:30: UserWarning: tokenizer.pad_token_id is None. Now set to 128009
+[36m(WorkerDict pid=1526096)[0m   warnings.warn(f"tokenizer.pad_token_id is None. Now set to {tokenizer.eos_token_id}", stacklevel=1)
+[36m(WorkerDict pid=1526096)[0m You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.
+[36m(WorkerDict pid=1526096)[0m Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]
+[36m(WorkerDict pid=1526097)[0m Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 54.24it/s]
+[36m(WorkerDict pid=1526096)[0m Loading checkpoint shards:  75%|███████▌  | 3/4 [00:00<00:00, 21.86it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 28.52it/s]
+[36m(WorkerDict pid=1521847)[0m /tmp/zlu39/robust_recall/lib/verl/verl/utils/tokenizer.py:30: UserWarning: tokenizer.pad_token_id is None. Now set to 128009[32m [repeated 3x across cluster][0m
+[36m(WorkerDict pid=1521847)[0m   warnings.warn(f"tokenizer.pad_token_id is None. Now set to {tokenizer.eos_token_id}", stacklevel=1)[32m [repeated 3x across cluster][0m
+[36m(WorkerDict pid=1521847)[0m You are attempting to use Flash Attention 2.0 with a model not initialized on GPU. Make sure to move the model to GPU after initializing it on CPU with `model.to('cuda')`.[32m [repeated 3x across cluster][0m
+[36m(WorkerDict pid=1521847)[0m Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s][32m [repeated 3x across cluster][0m
+[36m(WorkerDict pid=1521847)[0m Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 60.51it/s][32m [repeated 2x across cluster][0m
+[36m(WorkerDict pid=1521847)[0m Flash Attention 2.0 only supports torch.float16 and torch.bfloat16 dtypes, but the current dype in LlamaForCausalLM is torch.float32. You should run training or inference using Automatic Mixed-Precision via the `with torch.autocast(device_type='torch_device'):` decorator, or load the model with the `torch_dtype` argument. Example: `model = AutoModel.from_pretrained("openai/whisper-tiny", attn_implementation="flash_attention_2", torch_dtype=torch.float16)`
+[36m(WorkerDict pid=1521847)[0m Loading checkpoint shards:  25%|██▌       | 1/4 [00:04<00:12,  4.18s/it]
+[36m(WorkerDict pid=1526094)[0m /tmp/zlu39/robust_recall/lib/verl/verl/utils/tokenizer.py:30: UserWarning: tokenizer.pad_token_id is None. Now set to 128009[32m [repeated 3x across cluster][0m
+[36m(WorkerDict pid=1526094)[0m   warnings.warn(f"tokenizer.pad_token_id is None. Now set to {tokenizer.eos_token_id}", stacklevel=1)[32m [repeated 3x across cluster][0m
+[36m(WorkerDict pid=1526096)[0m Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s][32m [repeated 4x across cluster][0m
+[36m(WorkerDict pid=1526096)[0m Flash Attention 2.0 only supports torch.float16 and torch.bfloat16 dtypes, but the current dype in LlamaForCausalLM is torch.float32. You should run training or inference using Automatic Mixed-Precision via the `with torch.autocast(device_type='torch_device'):` decorator, or load the model with the `torch_dtype` argument. Example: `model = AutoModel.from_pretrained("openai/whisper-tiny", attn_implementation="flash_attention_2", torch_dtype=torch.float16)`[32m [repeated 3x across cluster][0m
+[36m(WorkerDict pid=1526097)[0m Loading checkpoint shards:  75%|███████▌  | 3/4 [00:12<00:04,  4.17s/it][32m [repeated 8x across cluster][0m
+[36m(WorkerDict pid=1526097)[0m Loading checkpoint shards: 100%|██████████| 4/4 [00:13<00:00,  2.88s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:13<00:00,  3.36s/it]
+[36m(WorkerDict pid=1521847)[0m /tmp/zlu39/.conda_envs/robust_recall/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py:690: FutureWarning: FSDP.state_dict_type() and FSDP.set_state_dict_type() are being deprecated. Please use APIs, get_state_dict() and set_state_dict(), which can support different parallelisms, FSDP1, FSDP2, DDP. API doc: https://pytorch.org/docs/stable/distributed.checkpoint.html#torch.distributed.checkpoint.state_dict.get_state_dict .Tutorial: https://pytorch.org/tutorials/recipes/distributed_checkpoint_recipe.html .
+[36m(WorkerDict pid=1521847)[0m   warnings.warn(
+[36m(WorkerDict pid=1521847)[0m Loading checkpoint shards:  75%|███████▌  | 3/4 [00:13<00:04,  4.80s/it][32m [repeated 3x across cluster][0m
+[36m(WorkerDict pid=1521847)[0m Loading checkpoint shards: 100%|██████████| 4/4 [00:15<00:00,  3.49s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:15<00:00,  3.85s/it][32m [repeated 3x across cluster][0m
+[36m(TaskRunner pid=1521260)[0m wandb: Currently logged in as: brian-luzc to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+[36m(TaskRunner pid=1521260)[0m wandb: Tracking run with wandb version 0.19.11
+[36m(TaskRunner pid=1521260)[0m wandb: Run data is saved locally in /tmp/zlu39/robust_recall/experiments/0530_popqa/wandb/run-20250530_105507-daukn7up
+[36m(TaskRunner pid=1521260)[0m wandb: Run `wandb offline` to turn off syncing.
+[36m(TaskRunner pid=1521260)[0m wandb: Syncing run popqa_exp_dapo_model_Llama_3_1_8B_Instruct_bs8_lr1e-6_roll32_p2048_r4096_rwdscore_judge_ent0_rt1.0_dsplit0
+[36m(TaskRunner pid=1521260)[0m wandb: ⭐️ View project at https://wandb.ai/brian-luzc/rl4r
+[36m(TaskRunner pid=1521260)[0m wandb: 🚀 View run at https://wandb.ai/brian-luzc/rl4r/runs/daukn7up
+[36m(TaskRunner pid=1521260)[0m CompletedProcess(args=['squeue', '-u', 'zlu39', '-n', 'vllm', '-t', 'R', '-h', '-o', '%i|%j|%N'], returncode=0, stdout='39185287|vllm|nid008649\n', stderr='')
+[36m(WorkerDict pid=1526094)[0m /tmp/zlu39/.conda_envs/robust_recall/lib/python3.10/site-packages/torch/distributed/fsdp/fully_sharded_data_parallel.py:690: FutureWarning: FSDP.state_dict_type() and FSDP.set_state_dict_type() are being deprecated. Please use APIs, get_state_dict() and set_state_dict(), which can support different parallelisms, FSDP1, FSDP2, DDP. API doc: https://pytorch.org/docs/stable/distributed.checkpoint.html#torch.distributed.checkpoint.state_dict.get_state_dict .Tutorial: https://pytorch.org/tutorials/recipes/distributed_checkpoint_recipe.html .[32m [repeated 3x across cluster][0m
+[36m(WorkerDict pid=1526094)[0m   warnings.warn([32m [repeated 3x across cluster][0m
+[36m(TaskRunner pid=1521260)[0m Training Progress:   0%|          | 0/1783000 [00:00<?, ?it/s]
