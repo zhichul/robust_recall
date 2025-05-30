@@ -42,6 +42,22 @@ cd $proj_root
 
 pip3 freeze --exclude-editable > constraints.txt
 
+################### get simple_evals ####################
+if [ -e "lib/simple_evals" ]; then
+    echo "simple_evals already downloaded, skipping clone."
+else
+    git clone https://github.com/openai/simple-evals.git lib/simple_evals
+fi
+if [ -e "lib/human_eval" ]; then
+    echo "human-eval already downloaded, skipping clone."
+else
+    git clone https://github.com/openai/human-eval.git lib/human_eval
+fi
+cd lib
+pip3 install -e human-eval -c $proj_root/constraints.txt
+pip3 install openai anthropic blobfile tabulate -c $proj_root/constraints.txt
+cd $project_root
+
 ################### get doc_cot ####################
 if [ -e "lib/doc_cot" ]; then
     echo "doc_cot already downloaded, skipping clone."
@@ -58,3 +74,8 @@ S2_API_KEY=klTlPNR9qxaTKnP604LdT6TRzThTv21M9JFCI8h1
 PROJECT_ROOT=$(pwd)
 " > .env
 cd $proj_root
+
+
+################### get data and model ####################
+huggingface-cli download --repo-type dataset akariasai/PopQA
+huggingface-cli download meta-llama/Llama-3.1-8B-Instruct
