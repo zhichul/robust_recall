@@ -25,6 +25,7 @@ reward_fn=score_judge
 entropy_coeff=0
 rollout_temp=1.0
 max_num_gen_batches=30
+reward_manager=dapo_threaded
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
@@ -52,6 +53,7 @@ while [[ "$#" -gt 0 ]]; do
         --entropy_coeff) entropy_coeff="$2"; shift 2 ;;
         --rollout_temp) rollout_temp="$2"; shift 2 ;;
         --max_num_gen_batches) max_num_gen_batches="$2"; shift 2 ;;
+        --reward_manager) reward_manager="$2"; shift 2 ;;
         --help|-h)
             echo "Usage: $0 [options]"
             echo "Options:"
@@ -59,7 +61,7 @@ while [[ "$#" -gt 0 ]]; do
             echo "  --n_rollout <int> --max_prompt_length <int> --max_response_length <int>"
             echo "  --total_steps <int> --epochs <int> --vllm_gpu_util <float> --tensor_parallel <int>"
             echo "  --max_checkpoints <int> --split <str> --save_freq <int> --eval_freq <int>"
-            echo "  --actor_offload <bool> --resume_mode <auto|disable> --log_val_n <int> --reward_fn <str> --max_num_gen_batches <int>"
+            echo "  --actor_offload <bool> --resume_mode <auto|disable> --log_val_n <int> --reward_fn <str> --max_num_gen_batches <int> --reward_manager <str>"
             exit 0
             ;;
         *) echo "Unknown option: $1"; exit 1 ;;
@@ -69,7 +71,8 @@ done
 split=split0
 project_name=rl4r
 model_name=$(basename "$model_path" | sed 's/[^a-zA-Z0-9]/_/g')
-experiment_name="popqa_exp_dapo_model_${model_name}_bs${batch_size}_lr${lr}_roll${n_rollout}_p${max_prompt_length}_r${max_response_length}_rwd${reward_fn}_ent${entropy_coeff}_rt${rollout_temp}_d${split}"
+# experiment_name="popqa_exp_dapo_model_${model_name}_bs${batch_size}_lr${lr}_roll${n_rollout}_p${max_prompt_length}_r${max_response_length}_rwd${reward_fn}_ent${entropy_coeff}_rt${rollout_temp}_d${split}"
+experiment_name="debug"
 
 # Output results
 echo "ngpus: $ngpus"
@@ -95,6 +98,7 @@ echo "reward_fn: $reward_fn"
 echo "entropy_coeff: $entropy_coeff"
 echo "rollout_temp: $rollout_temp"
 echo "max_num_gen_batches: $max_num_gen_batches"
+echo "reward_manager: $reward_manager"
 echo "experiment_name: $experiment_name"
 
 ############
@@ -221,7 +225,7 @@ python3 -u -m recipe.dapo.main_dapo \
     actor_rollout_ref.ref.fsdp_config.param_offload=${actor_offload} \
     actor_rollout_ref.ref.ulysses_sequence_parallel_size=${sp_size} \
     actor_rollout_ref.actor.fsdp_config.fsdp_size=-1 \
-    reward_model.reward_manager=dapo \
+    reward_model.reward_manager=${reward_manager} \
     reward_model.overlong_buffer.enable=${enable_overlong_buffer} \
     reward_model.overlong_buffer.len=${overlong_buffer_len} \
     reward_model.overlong_buffer.penalty_factor=${overlong_penalty_factor} \

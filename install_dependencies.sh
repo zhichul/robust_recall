@@ -38,6 +38,10 @@ pip3 install vllm==0.8.4 --no-cache-dir
 
 # Install flash-attn
 pip3 install flash-attn --no-build-isolation --no-cache-dir
+
+# patch dapo threaded
+git apply ../patches/verl_dapo_threaded.patch
+
 cd $proj_root
 
 pip3 freeze --exclude-editable > constraints.txt
