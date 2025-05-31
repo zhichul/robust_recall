@@ -17,19 +17,21 @@ def compute_score(data_source, solution_str, ground_truth, extra_info=None):
         init_nodes()
     problem = extra_info['problem']
     evaluator = random.choice(EVALUATORS)
-    solution_m = re.search(r'<answer>(.*)</answer>', solution_str, re.IGNORECASE)
+    solution_m = re.search(r'<answer>(.*?)</answer>', solution_str, re.IGNORECASE)
     if solution_m is None:
         score = 0.0
-        extracted = ""
-        judegment = ""
+        extracted = "format_error"
+        judgement = "format_error"
     else:
         extracted = solution_m.group(1)
-        judegment = evaluator.grade_sample(problem, ground_truth, extracted)
-        if judegment == "A":
+        if extracted == "":
+            extracted = "empty_answer"
+        judgement = evaluator.grade_sample(problem, ground_truth, extracted)
+        if judgement == "A":
             score = 1.0
         else:
             score = 0.1
-    return {'score': score, 'acc': float(score == 1.0), 'pred': solution_str, 'judge_pred': judegment, 'extracted_answer': extracted}
+    return {'score': score, 'acc': float(score == 1.0), 'pred': solution_str, 'judge_pred': judgement, 'extracted_answer': extracted}
 
 def init_nodes():
     from sq_utils import running_nodes
