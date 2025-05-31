@@ -6,7 +6,6 @@ import os
 sys.path.append(os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", "lib")))
 sys.path.append(os.path.realpath(os.path.join(os.path.dirname(__file__))))
 
-NODES = None
 EVALUATORS = None
 
 def compute_score(data_source, solution_str, ground_truth, extra_info=None):
@@ -26,7 +25,16 @@ def compute_score(data_source, solution_str, ground_truth, extra_info=None):
         extracted = solution_m.group(1)
         if extracted == "":
             extracted = "empty_answer"
-        judgement = evaluator.grade_sample(problem, ground_truth, extracted)
+        for i in range(4): # try three times error on fourth
+            try:
+                judgement = evaluator.grade_sample(problem, ground_truth, extracted)
+                break
+            except Exception as e:
+                # some vllm server died
+                if i >= 3:
+                    raise e
+                else:
+                    init_nodes()
         if judgement == "A":
             score = 1.0
         else:
@@ -44,11 +52,10 @@ def init_nodes():
         OPENAI_SYSTEM_MESSAGE_CHATGPT,
         ChatCompletionSampler,
     )
-    global NODES
     global EVALUATORS
-    NODES = running_nodes('vllm')
-    EVALUATORS = []
-    for node in NODES: # technically, each node is a nodelist, but we have singletons by assumption
+    nodes = running_nodes('vllm')
+    evaluators = []
+    for node in nodes: # technically, each node is a nodelist, but we have singletons by assumption
         grading_sampler = ChatCompletionSampler(
                 model="meta-llama/Llama-3.3-70B-Instruct",
                 system_message=OPENAI_SYSTEM_MESSAGE_API,
@@ -60,7 +67,11 @@ def init_nodes():
             grader_model=grading_sampler,
             num_examples=None,
         )
-        EVALUATORS.append(evaluator)
+        evaluators.append(evaluator)
+    EVALUATORS = evaluators
+    print('rescanned vllm nodes')
+    print(nodes)
+    print(evaluators)
 
 if __name__ == "__main__":
     test_problem = 'On what day, month, and year did Tara Chand (a politician and a Dalit leader from Jammu and Kashmir) resign from the Indian National Congress in support of Ghulam Nabi Azad?'
