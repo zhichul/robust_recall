@@ -3,6 +3,7 @@ set -eu
 
 # Default values
 split=split0
+subsplits=()
 ngpus=4
 model_path="meta-llama/Llama-3.1-8B-Instruct"
 batch_size=$((ngpus * 2))
@@ -43,7 +44,8 @@ while [[ "$#" -gt 0 ]]; do
         --vllm_gpu_util) vllm_gpu_util="$2"; shift 2 ;;
         --tensor_parallel) tensor_parallel="$2"; shift 2 ;;
         --max_checkpoints) max_checkpoints="$2"; shift 2 ;;
-        --split) graph_spec="$2"; shift 2 ;;
+        --split) split="$2"; shift 2 ;;
+        --subsplit) subsplits+=("$2"); shift 2 ;;
         --save_freq) save_freq="$2"; shift 2 ;;
         --eval_freq) eval_freq="$2"; shift 2 ;;
         --actor_offload) actor_offload="$2"; shift 2 ;;
@@ -61,11 +63,21 @@ while [[ "$#" -gt 0 ]]; do
             echo "  --n_rollout <int> --max_prompt_length <int> --max_response_length <int>"
             echo "  --total_steps <int> --epochs <int> --vllm_gpu_util <float> --tensor_parallel <int>"
             echo "  --max_checkpoints <int> --split <str> --save_freq <int> --eval_freq <int>"
-            echo "  --actor_offload <bool> --resume_mode <auto|disable> --log_val_n <int> --reward_fn <str> --max_num_gen_batches <int> --reward_manager <str>"
+            echo "  --actor_offload <bool> --resume_mode <auto|disable> --log_val_n <int> --reward_fn <str> --max_num_gen_batches <int> --reward_manager <str> --subsplit <str>"
             exit 0
             ;;
         *) echo "Unknown option: $1"; exit 1 ;;
     esac
+done
+
+if [[ ${#subsplits[@]} -eq 0 ]]; then
+    # default buckets when none are supplied
+    subsplits=(0_to_1000 1000_to_10000 10000_to_100000 100000_to_inf)
+fi
+
+train_files=()
+for r in "${subsplits[@]}"; do
+    train_files+=("'data/processed/${split}/${r}/train.parquet'")
 done
 
 split=split0
@@ -89,6 +101,7 @@ echo "vllm_gpu_util: $vllm_gpu_util"
 echo "tensor_parallel: $tensor_parallel"
 echo "max_checkpoints: $max_checkpoints"
 echo "split: $split"
+echo "subsplits: ${subsplits[*]}"
 echo "save_freq: $save_freq"
 echo "eval_freq: $eval_freq"
 echo "actor_offload: $actor_offload"
@@ -163,7 +176,7 @@ use_dynamic_bsz=True
 actor_ppo_max_token_len=$((max_prompt_length + max_response_length))
 infer_ppo_max_token_len=$((max_prompt_length + max_response_length))
 
-TRAIN_FILE="['data/processed/${split}/0_to_1000/train.parquet', 'data/processed/${split}/1000_to_10000/train.parquet', 'data/processed/${split}/10000_to_100000/train.parquet', 'data/processed/${split}/100000_to_inf/train.parquet']"
+TRAIN_FILE="[$(IFS=', '; echo "${train_files[*]}")]"
 TEST_FILE="['data/processed/${split}/0_to_1000/dev.parquet', 'data/processed/${split}/1000_to_10000/dev.parquet', 'data/processed/${split}/10000_to_100000/dev.parquet', 'data/processed/${split}/100000_to_inf/dev.parquet']"
 export PYTHONPATH=$PYTHONPATH:$(realpath ../../lib/verl)
 export HYDRA_FULL_ERROR=1
