@@ -88,3 +88,7 @@ cd $proj_root
 ################### get data and model ####################
 huggingface-cli download --repo-type dataset akariasai/PopQA
 huggingface-cli download meta-llama/Llama-3.1-8B-Instruct
+
+################### link artifact folders ####################
+ln -s $(realpath ~/research/robust_recall/experiments/0530_popqa/checkpoints) experiments/0530_popqa/checkpoints
+ln -s $(realpath ~/research/robust_recall/experiments/0530_popqa/logs) experiments/0530_popqa/logs
