@@ -83,8 +83,7 @@ done
 split=split0
 project_name=rl4r
 model_name=$(basename "$model_path" | sed 's/[^a-zA-Z0-9]/_/g')
-# experiment_name="popqa_exp_dapo_model_${model_name}_bs${batch_size}_lr${lr}_roll${n_rollout}_p${max_prompt_length}_r${max_response_length}_rwd${reward_fn}_ent${entropy_coeff}_rt${rollout_temp}_d${split}"
-experiment_name="debug"
+experiment_name="popqa_exp_dapo_model_${model_name}_bs${batch_size}_lr${lr}_roll${n_rollout}_p${max_prompt_length}_r${max_response_length}_rwd${reward_fn}_ent${entropy_coeff}_rt${rollout_temp}_d${split}"
 
 # Output results
 echo "ngpus: $ngpus"
