@@ -75,7 +75,7 @@ cd $proj_root
 if [ -e "lib/doc_cot" ]; then
     echo "doc_cot already downloaded, skipping clone."
 else
-    git clone git@github.com:zhichul/doc_cot.git lib/doc_cot
+    git clone https://github.com/zhichul/doc_cot.git lib/doc_cot
 fi
 
 cd lib/doc_cot
