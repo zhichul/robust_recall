@@ -5,6 +5,7 @@ do
 python3 preprocess_data.py \
     --local_dir data/processed/split${i}/${range} \
     --data_source data/raw/splits/fifty_fifty/split${i}/${range} \
-    --data_name $range
+    --data_name $range \
+    --decontaminated
 done
 done

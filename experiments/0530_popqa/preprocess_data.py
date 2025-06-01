@@ -19,15 +19,21 @@ if __name__ == '__main__':
     parser.add_argument('--local_dir', default=None)
     parser.add_argument('--data_source', default=None)
     parser.add_argument('--data_name', type=str, default=None)
-
+    parser.add_argument('--decontaminated', action='store_true', default=False)
+    
     args = parser.parse_args()
-
+    if args.decontaminated:
+        dev_name = 'dev.decon'
+        test_name = 'test.decon'
+    else:
+        dev_name = 'dev'
+        test_name = 'test'
     train_datasets = []
     dev_datasets = []
     test_datasets = []
     train_datasets.append(load_dataset('parquet', data_files=os.path.join(args.data_source, f'train.parquet'))['train'])
-    dev_datasets.append(load_dataset('parquet', data_files=os.path.join(args.data_source, f'dev.parquet'))['train'])
-    test_datasets.append(load_dataset('parquet', data_files=os.path.join(args.data_source, f'test.parquet'))['train'])
+    dev_datasets.append(load_dataset('parquet', data_files=os.path.join(args.data_source, f'{dev_name}.parquet'))['train'])
+    test_datasets.append(load_dataset('parquet', data_files=os.path.join(args.data_source, f'{test_name}.parquet'))['train'])
         
     train_dataset = concatenate_datasets(train_datasets)
     dev_dataset = concatenate_datasets(dev_datasets)
@@ -66,5 +72,5 @@ if __name__ == '__main__':
     local_dir = args.local_dir
 
     train_dataset.to_parquet(os.path.join(local_dir, 'train.parquet'))
-    dev_dataset.to_parquet(os.path.join(local_dir, 'dev.parquet'))
-    test_dataset.to_parquet(os.path.join(local_dir, 'test.parquet'))
+    dev_dataset.to_parquet(os.path.join(local_dir, f'{dev_name}.parquet'))
+    test_dataset.to_parquet(os.path.join(local_dir, f'{test_name}.parquet'))
