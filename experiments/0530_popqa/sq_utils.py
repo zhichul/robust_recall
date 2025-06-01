@@ -41,6 +41,7 @@ def _parse_slurm_time(ts: str) -> Optional[timedelta]:
 
 def running_nodes(job_name: str,
                   user: Optional[str] = None,
+                  min_elapsed: timedelta = timedelta(minutes=10),
                   min_remaining: timedelta = timedelta(hours=1)
                   ) -> List[str]:
     """
@@ -88,7 +89,7 @@ def running_nodes(job_name: str,
             continue
 
         remaining = limit - elapsed
-        if remaining > min_remaining:
+        if remaining > min_remaining and elapsed > min_elapsed:
             keep.add(nodelist)
 
     return sorted(keep)   # or list(keep) if ordering is irrelevant
