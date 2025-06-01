@@ -60,7 +60,7 @@ fi
 cd lib
 cd simple_evals
 git checkout 3ec4e9b5ae3931a1858580e2fd3ce80c7fcbe1d9
-git apply ../patches/simple_evals_chat.patch
+git apply ../patches/simple_eval_chat.patch
 cd ..
 cd human-eval
 git checkout 6d43fb980f9fee3c892a914eda09951f772ad10d
