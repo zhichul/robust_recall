@@ -57,7 +57,7 @@ def init_nodes():
         ChatCompletionSampler,
     )
     global EVALUATORS
-    nodes = ['gpu401'] #running_nodes('vllm')
+    nodes = ['localhost'] #running_nodes('vllm')
     evaluators = []
     for node in nodes: # technically, each node is a nodelist, but we have singletons by assumption
         grading_sampler = ChatCompletionSampler(
