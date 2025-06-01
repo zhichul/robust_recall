@@ -30,6 +30,6 @@ def compute_score(data_source, solution_str, ground_truth, extra_info=None):
 if __name__ == "__main__":
     test_problem = 'On what day, month, and year did Tara Chand (a politician and a Dalit leader from Jammu and Kashmir) resign from the Indian National Congress in support of Ghulam Nabi Azad?'
     test_answer = '<thought> some random thoughts </thought> <answer> August 30, 2022 </answer>'
-    test_label = 'August 30, 2022'
-    print(compute_score(None, test_answer, [test_label, test_label], {'problem': test_problem}))
+    test_label = ['August 30 2022', 'august 30, 2022']
+    print(compute_score(None, test_answer, test_label, {'problem': test_problem}))
     print(compute_score(None, test_answer, test_label, {'problem': test_problem}))
