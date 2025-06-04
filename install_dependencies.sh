@@ -88,6 +88,8 @@ PROJECT_ROOT=$(pwd)
 " > .env
 cd $proj_root
 
+################### requirements.txt ######################
+pip install -r requirements.txt -c constraints.txt
 
 ################### get data and model ####################
 huggingface-cli download --repo-type dataset akariasai/PopQA
