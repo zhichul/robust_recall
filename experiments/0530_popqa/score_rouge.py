@@ -12,6 +12,7 @@ def compute_score(data_source, solution_str, ground_truth, extra_info=None):
     if len(solutions) != 1:
         score = 0.0
         extracted = "format_error"
+        rl = 0.0
     else:
         extracted = solutions[0]
         score = 0.1
