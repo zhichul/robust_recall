@@ -6,6 +6,7 @@ from rouge_score import rouge_scorer
 scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
 
 def compute_score(data_source, solution_str, ground_truth, extra_info=None):
+    ground_truth = json.loads(ground_truth) # for some reason popqa ground truth is a json string
     if isinstance(ground_truth, str):
         ground_truth = [ground_truth]
     solutions = re.findall(r'<answer>(.*?)</answer>', solution_str, re.IGNORECASE)
