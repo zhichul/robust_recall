@@ -1,0 +1,12 @@
+diff --git a/requirements.txt b/requirements.txt
+index f60d43d..c03983b 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -16,6 +16,7 @@ pre-commit
+ ray[default]
+ tensordict<=0.6.2
+ torchdata
++torch<=2.4.0
+ transformers
+ # vllm==0.8.4
+ wandb
