@@ -31,10 +31,11 @@ else
 fi
 cd lib/verl
 git checkout $verl_commit
+git apply ../patches/verl_torch_version.patch
 pip3 install -e . --no-cache-dir
 
 # Install the latest stable version of vLLM
-pip3 install vllm==0.8.3 --no-cache-dir
+pip3 install vllm==0.6.3 --no-cache-dir
 
 # Install flash-attn
 pip3 install flash-attn --no-build-isolation --no-cache-dir
