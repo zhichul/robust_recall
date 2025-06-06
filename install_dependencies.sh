@@ -91,7 +91,7 @@ cd $proj_root
 
 ################### requirements.txt ######################
 pip install -r requirements.txt -c constraints.txt
-pip install tensordict==0.6.2
+pip install tensordict==0.6.2 -c constraints.txt
 ################### get data and model ####################
 huggingface-cli download --repo-type dataset akariasai/PopQA
 huggingface-cli download meta-llama/Llama-3.1-8B-Instruct
