@@ -27,6 +27,7 @@ entropy_coeff=0
 rollout_temp=1.0
 max_num_gen_batches=30
 reward_manager=dapo_threaded
+nnodes=1
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
@@ -56,6 +57,7 @@ while [[ "$#" -gt 0 ]]; do
         --rollout_temp) rollout_temp="$2"; shift 2 ;;
         --max_num_gen_batches) max_num_gen_batches="$2"; shift 2 ;;
         --reward_manager) reward_manager="$2"; shift 2 ;;
+        --nnodes) nnodes="$2"; shift 2 ;;
         --help|-h)
             echo "Usage: $0 [options]"
             echo "Options:"
@@ -112,6 +114,7 @@ echo "entropy_coeff: $entropy_coeff"
 echo "rollout_temp: $rollout_temp"
 echo "max_num_gen_batches: $max_num_gen_batches"
 echo "reward_manager: $reward_manager"
+echo "nnodes: $nnodes"
 echo "experiment_name: $experiment_name"
 
 ############
@@ -156,7 +159,6 @@ train_prompt_mini_bsz=$ngpus
 # WORKING_DIR=${WORKING_DIR:-"${PWD}"}
 # RUNTIME_ENV=${RUNTIME_ENV:-"${WORKING_DIR}/verl/trainer/runtime_env.yaml"}
 # NNODES=${NNODES:-16}
-NNODES=1
 
 # Paths
 # RAY_DATA_HOME=${RAY_DATA_HOME:-"${HOME}/verl"}
@@ -246,7 +248,7 @@ python3 -u -m recipe.dapo.main_dapo \
     trainer.project_name="${project_name}" \
     trainer.experiment_name="${experiment_name}" \
     trainer.n_gpus_per_node=${ngpus} \
-    trainer.nnodes="${NNODES}" \
+    trainer.nnodes="${nnodes}" \
     trainer.val_before_train=True \
     trainer.test_freq=${eval_freq} \
     trainer.save_freq=${save_freq} \
