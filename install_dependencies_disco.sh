@@ -34,7 +34,7 @@ git checkout $verl_commit
 pip3 install -e . --no-cache-dir
 
 # Install the latest stable version of vLLM
-pip3 install vllm==0.8.4 --no-cache-dir
+pip3 install vllm==0.8.3 --no-cache-dir
 
 # Install flash-attn
 pip3 install flash-attn --no-build-isolation --no-cache-dir
