@@ -177,7 +177,7 @@ actor_ppo_max_token_len=$((max_prompt_length + max_response_length))
 infer_ppo_max_token_len=$((max_prompt_length + max_response_length))
 
 TRAIN_FILE="[$(IFS=', '; echo "${train_files[*]}")]"
-TEST_FILE="['data/processed/${split}/0_to_1000/dev.parquet', 'data/processed/${split}/1000_to_10000/dev.parquet', 'data/processed/${split}/10000_to_100000/dev.parquet', 'data/processed/${split}/100000_to_inf/dev.parquet']"
+TEST_FILE="['data/processed/${split}/0_to_1000/dev.decon.parquet', 'data/processed/${split}/1000_to_10000/dev.decon.parquet', 'data/processed/${split}/10000_to_100000/dev.decon.parquet', 'data/processed/${split}/100000_to_inf/dev.decon.parquet']"
 set +eu
 export PYTHONPATH=$PYTHONPATH:$(realpath ../../lib/verl)
 set -eu
