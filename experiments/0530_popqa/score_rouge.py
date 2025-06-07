@@ -5,11 +5,14 @@ from rouge_score import rouge_scorer
 
 scorer = rouge_scorer.RougeScorer(['rougeL'], use_stemmer=True)
 
-def compute_score(data_source, solution_str, ground_truth, extra_info=None):
+def compute_score(data_source, solution_str, ground_truth, extra_info=None, multiline=False):
     ground_truth = json.loads(ground_truth) # for some reason popqa ground truth is a json string
     if isinstance(ground_truth, str):
         ground_truth = [ground_truth]
-    solutions = re.findall(r'<answer>(.*?)</answer>', solution_str, re.IGNORECASE)
+    flag = re.IGNORECASE
+    if multiline:
+        flag = flag | re.DOTALL
+    solutions = re.findall(r'<answer>(.*?)</answer>', solution_str, flag)
     if len(solutions) != 1:
         score = 0.0
         extracted = "format_error"
