@@ -91,6 +91,7 @@ cd $proj_root
 
 ################### requirements.txt ######################
 pip install -r requirements.txt -c constraints.txt
+pip install transformers==4.51.3
 #pip install tensordict==0.6.2 -c constraints.txt
 
 ################### get data and model ####################

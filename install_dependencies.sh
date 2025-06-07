@@ -14,7 +14,7 @@ proj_root=$(pwd)
 echo "ROOT=$(pwd)" > .env
 
 # create conda env
-prefix=/tmp/zlu39/.conda_envs/robust_recall
+prefix=/pscratch/sd/z/zlu39/.conda_envs/robust_recall
 mkdir -p ${prefix}
 conda create --prefix ${prefix} python==3.10 -y
 # ln -s ${prefix} ${HOME}/.conda/envs/tmp_robust_recall
@@ -41,7 +41,7 @@ pip3 install vllm==0.6.3 --no-cache-dir
 pip3 install flash-attn --no-build-isolation --no-cache-dir
 
 # patch dapo threaded
-git apply ../patches/verl_dapo_threaded.patch
+# git apply ../patches/verl_dapo_threaded.patch
 
 cd $proj_root
 
@@ -61,7 +61,7 @@ fi
 cd lib
 cd simple_evals
 git checkout 3ec4e9b5ae3931a1858580e2fd3ce80c7fcbe1d9
-git apply ../patches/simple_evals_chat.patch
+# git apply ../patches/simple_evals_chat.patch
 cd ..
 cd human-eval
 git checkout 6d43fb980f9fee3c892a914eda09951f772ad10d
@@ -91,6 +91,7 @@ cd $proj_root
 
 ################### requirements.txt ######################
 pip install -r requirements.txt -c constraints.txt
+pip install transformers==4.51.3
 #pip install tensordict==0.6.2 -c constraints.txt
 ################### get data and model ####################
 huggingface-cli download --repo-type dataset akariasai/PopQA
