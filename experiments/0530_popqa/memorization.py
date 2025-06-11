@@ -139,7 +139,7 @@ def main_answer():
             dataset = dataset.add_column('model_predictions', answers)
             dataset.to_parquet(f'{out_dir}/{cmdline_args.subset}.wikilinked.qa.parquet')
 
-def prefix_len_up_to_subject(wiki, instance):
+def prefix_up_to_subject(wiki, instance):
     user = f"""\
 SUBJECT: {[instance['subj']] + json.loads(instance['s_aliases'])}
 RELATION: {instance['prop']}
