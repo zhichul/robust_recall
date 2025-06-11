@@ -53,7 +53,7 @@ def get_answers(question, model=model_ins, temperature=1.0, max_completion_token
     return [c.message.content for c in output.choices]
 
 def call_llm(messages, model=model_llm, temperature=0, max_completion_tokens=1024, n=1):
-    output = client_ins.chat.completions.create(model=model, messages=messages, max_completion_tokens=max_completion_tokens, temperature=temperature, n=n)
+    output = client_llm.chat.completions.create(model=model, messages=messages, max_completion_tokens=max_completion_tokens, temperature=temperature, n=n)
     return [c.message.content for c in output.choices]
 
 def extract_answer(solution_str):
