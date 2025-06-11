@@ -183,6 +183,7 @@ export PYTHONPATH=$PYTHONPATH:$(realpath ../../lib/verl)
 set -eu
 export HYDRA_FULL_ERROR=1
 python3 -u -m recipe.dapo.main_dapo \
+    actor_rollout_ref.actor.use_torch_compile=False \
     +actor_rollout_ref.actor.fsdp_config.model_dtype=bfloat16 \
     data.train_files="${TRAIN_FILE}" \
     data.val_files="${TEST_FILE}" \
