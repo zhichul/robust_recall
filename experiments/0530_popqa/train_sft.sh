@@ -75,8 +75,8 @@ source $(conda info --base)/etc/profile.d/conda.sh
 conda activate /tmp/zlu39/.conda_envs/robust_recall
 set -eu
 
-# train_file= ,data/sft/split0/1000_to_10000/train.parquet,data/sft/split0/10000_to_100000/train.parquet,data/sft/split0/100000_to_inf/train.parquet]
-# val_file= ,data/sft/split0/1000_to_10000/dev.parquet,data/sft/split0/10000_to_100000/dev.parquet,data/sft/split0/100000_to_inf/dev.parquet]
+train_file="['data/sft/split0/0_to_1000/train.parquet','data/sft/split0/1000_to_10000/train.parquet','data/sft/split0/10000_to_100000/train.parquet','data/sft/split0/100000_to_inf/train.parquet']"
+val_file="['data/sft/split0/0_to_1000/dev.parquet', 'data/sft/split0/1000_to_10000/dev.parquet', 'data/sft/split0/10000_to_100000/dev.parquet', 'data/sft/split0/100000_to_inf/dev.parquet']"
 if [[ -z "${total_steps}" ]]; then
     train_step_cmd=""
 else
@@ -88,10 +88,10 @@ fi
 export PYTHONPATH=${PYTHONPATH:-""}:$(realpath ../../lib/verl/)
 export HYDRA_FULL_ERROR=1
 torchrun --standalone --nnodes=1 --nproc_per_node=${ngpus} \
-    -m verl.trainer.fsdp_sft_trainer \
+     -m verl.trainer.fsdp_sft_trainer \
     data.train_batch_size=${batch_size} \
-    data.train_files="['data/sft/split0/0_to_1000/train.parquet']" \
-    data.val_files="['data/sft/split0/0_to_1000/dev.parquet']" \
+    data.train_files="${train_file}" \
+    data.val_files="${val_file}" \
     data.prompt_key=extra_info \
     data.response_key=extra_info \
     +data.prompt_dict_keys=['sft_prompt'] \
