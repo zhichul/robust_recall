@@ -175,3 +175,4 @@ cython_debug/
 
 checkpoints/
 logs/
+experiments/0530_popqa/data/raw/**/*.wikilinked.parquet
