@@ -106,6 +106,8 @@ torchrun --standalone --nnodes=1 --nproc_per_node=${ngpus} \
     trainer.project_name=${project_name} \
     trainer.experiment_name=${experiment_name} \
     trainer.total_epochs=${epochs} \
+    trainer.save_freq=1739 \
+    trainer.test_freq=1739 \
     ${train_step_cmd} \
     trainer.logger=['console','wandb'] \
     trainer.default_hdfs_dir=null \
