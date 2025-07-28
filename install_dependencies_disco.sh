@@ -16,7 +16,7 @@ echo "ROOT=$(pwd)" > .env
 # create conda env
 prefix=/local/zlu39/.conda_envs/robust_recall
 mkdir -p ${prefix}
-conda create --prefix ${prefix} python==3.10 -y
+conda create --prefix ${prefix} python==3.12 -y
 # ln -s ${prefix} ${HOME}/.conda/envs/local_robust_recall
 
 source $(conda info --base)/etc/profile.d/conda.sh

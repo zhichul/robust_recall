@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Parquet Row Explorer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 2rem auto;
+      max-width: 900px;
+      padding: 0 1rem;
+    }
+    input[type="number"] {
+      width: 6rem;
+    }
+    pre {
+      background: #f6f8fa;
+      padding: 1rem;
+      border-radius: 6px;
+      white-space: pre-wrap;      /* wrap long lines */
+      word-break: break-word;     /* break long words */
+    }
+    details {
+      margin-bottom: 1rem;
+    }
+    blockquote {
+      background: #f0f2f4;
+      padding: 0.75rem 1rem;
+      border-left: 4px solid #888;
+      border-radius: 4px;
+      margin: 0 0 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Parquet Row Explorer</h1>
+
+  <label>Row index:
+    <input id="idx" type="number" min="0" step="1" value="0" />
+  </label>
+  <button onclick="loadRow()">Load</button>
+  <span id="status"></span>
+
+  <section id="out"></section>
+
+  <script>
+    // Simple HTML escape to avoid XSS and null errors
+    function escapeHtml(text) {
+      if (text === null || text === undefined) return "";
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    async function loadRow() {
+      const idx = document.getElementById('idx').value;
+      const status = document.getElementById('status');
+      const out = document.getElementById('out');
+      status.textContent = '⏳ fetching…';
+      out.innerHTML = '';
+      try {
+        const res = await fetch(`/row/${idx}`);
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        status.textContent = '';
+
+        // --- render ---
+        out.innerHTML = `
+          <h2>Question</h2>
+          <blockquote>${escapeHtml(data.question)}</blockquote>
+
+          ${data.nlp_background || data.topic_background || data.paper_read !== undefined || data.search_query ? `
+            <h3>Context</h3>
+            <ul>
+              ${`<li><strong>NLP background:</strong> ${escapeHtml(data.nlp_background)}</li>`}
+              ${`<li><strong>Topic background:</strong> ${escapeHtml(data.topic_background)}</li>`}
+              ${`<li><strong>Paper read:</strong> ${escapeHtml(data.paper_read)}</li>`}
+              ${`<li><strong>Search query:</strong> ${escapeHtml(data.search_query)}</li>`}
+            </ul>` : ''}
+
+          <h3>Majority</h3>
+          <p><strong>Majority Vote Type:</strong> ${escapeHtml(data.majority_type)}<br>
+             <strong>Majority Vote Answer (if yes_no):</strong> ${escapeHtml(data.majority_answer)}</p>
+
+          <h2>Generations (${data.generations.length})</h2>
+          ${data.generations.map((g,i)=>`
+            <details>
+              <summary>[${escapeHtml(g.mode)}] Generation ${i}</summary>
+              <p><strong>Mode:</strong> ${escapeHtml(g.mode)} | 
+                 <strong>Model:</strong> ${escapeHtml(g.model)} | 
+                 <strong>T:</strong> ${g.temperature} | 
+                 <strong>Max tokens:</strong> ${g.max_completion_tokens}</p>
+              ${g.content.map((c,j)=>`<pre title="${j}">${escapeHtml(c)}</pre>`).join('')}
+            </details>
+          `).join('')}
+
+          <h2>Answers (${data.answers.length})</h2>
+          ${data.answers.map((a,i)=>`
+            <details>
+              <summary>Answer ${i} — ${escapeHtml(a.type)}</summary>
+              <p><strong>Answer:</strong> ${escapeHtml(a.answer_unified)}</p>
+              ${a.highlighted_evidence ? `
+                <p><strong>Highlighted evidence:</strong></p>
+                <ul>${a.highlighted_evidence.map(ev=>`<li>${escapeHtml(ev)}</li>`).join('')}</ul>
+              ` : ''}
+              ${a.evidence ? `
+                <p><strong>Evidence:</strong></p>
+                <ul>${a.evidence.map(ev=>`<li>${escapeHtml(ev)}</li>`).join('')}</ul>
+              ` : ''}
+            </details>
+          `).join('')}
+
+          ${data.title || data.abstract ? `
+            <h2>Metadata</h2>
+            ${data.title ? `
+              <details>
+                <summary>Title</summary>
+                <p>${escapeHtml(data.title)}</p>
+              </details>` : ''}
+            ${data.abstract ? `
+              <details>
+                <summary>Abstract</summary>
+                <p>${escapeHtml(data.abstract)}</p>
+              </details>` : ''}
+          ` : ''}
+        `;
+      } catch (err) {
+        status.textContent = `❌ ${err}`;
+      }
+    }
+
+    // autoload first row on page load
+    loadRow();
+  </script>
+</body>
+</html>

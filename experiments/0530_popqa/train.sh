@@ -22,11 +22,11 @@ save_freq=10
 actor_offload=False
 resume_mode=auto
 log_val_n=10
-reward_fn=score_judge
+reward_fn=score_rouge
 entropy_coeff=0
 rollout_temp=1.0
 max_num_gen_batches=30
-reward_manager=dapo_threaded
+reward_manager=dapo
 nnodes=1
 
 # Parse arguments
@@ -125,7 +125,7 @@ export WANDB_API_KEY=8a464cf7b440ea91becb29da1874822e4f5273ed
 
 set +eu
 source $(conda info --base)/etc/profile.d/conda.sh
-conda activate /tmp/zlu39/.conda_envs/robust_recall/
+conda activate /tmp/zlu39/.conda_envs/verl/
 set -eu
 
 adv_estimator=grpo

@@ -16,7 +16,7 @@ echo "ROOT=$(pwd)" > .env
 # create conda env
 prefix=/pscratch/sd/z/zlu39/.conda_envs/robust_recall
 mkdir -p ${prefix}
-conda create --prefix ${prefix} python==3.10 -y
+conda create --prefix ${prefix} python==3.12 -y
 # ln -s ${prefix} ${HOME}/.conda/envs/tmp_robust_recall
 
 source $(conda info --base)/etc/profile.d/conda.sh
@@ -31,7 +31,7 @@ else
 fi
 cd lib/verl
 git checkout $verl_commit
-git apply ../patches/verl_torch_version.patch
+# git apply ../patches/verl_torch_version.patch
 pip3 install -e . --no-cache-dir
 
 # Install the latest stable version of vLLM
