@@ -21,13 +21,16 @@ def get_completions(prefix, model=None, temperature=1.0, max_completion_tokens=3
 prompt_simple = "You are a helpful assistant. When responding to questions, enclose your thoughts in <thought></thought> and your clean, final answer in <answer></answer>. The answer should be a short phrase or name rather than a sentence."
 prompt_gen_read = prompt_simple + " When you are asked a factual question about an entity, you must try to recollect by yourself the wikipedia article about the entity first without using any external tools."
 
-def get_answers(question, model=None, temperature=1.0, max_completion_tokens=1024, gen_read=False, n=1, augment=None):
+def get_answers(question, model=None, temperature=1.0, max_completion_tokens=1024, gen_read=False, n=1, augment=None, system=True):
     if model is None: model = model_ins
     user = question if not augment else f'{question}\nIf it helps, here is what you recollected earlier about the entity/concept in question:\n```{augment}```'
-    output = client_ins.chat.completions.create(model=model, messages=[{
+    messages = [{
                 "role": "system",
                 "content": prompt_simple if not gen_read else prompt_gen_read
-            }, {'role': 'user', 'content': user}], max_completion_tokens=max_completion_tokens, temperature=temperature, n=n)
+            }, {'role': 'user', 'content': user}]
+    if not system:
+        messages = [messages[1]]
+    output = client_ins.chat.completions.create(model=model, messages=messages, max_completion_tokens=max_completion_tokens, temperature=temperature, n=n)
     return [c.message.content for c in output.choices]
 
 def call_llm(messages, model=None, temperature=0, max_completion_tokens=1024, n=1):
@@ -37,6 +40,13 @@ def call_llm(messages, model=None, temperature=0, max_completion_tokens=1024, n=
 
 def extract_answer(solution_str):
     answer = re.findall(r'<answer>(.*?)</answer>', solution_str, re.IGNORECASE)
+    if answer:
+        return answer[0]
+    else:
+        return ""
+
+def extract_thought(solution_str):
+    answer = re.findall(r'<thought>(.*?)</thought>', solution_str, re.IGNORECASE | re.DOTALL)
     if answer:
         return answer[0]
     else:
@@ -121,7 +131,7 @@ def score_at_k(label: str|list[str], answers: list[str], scoring_fn, k=1, mc_out
             scores
         )
     
-def main_answer():
+def main_answer(epoch=None):
     out_dir = f'generations/memo/fifty_fifty/split{cmdline_args.fold}'
     os.makedirs(out_dir, exist_ok=True)
     for split in [cmdline_args.fold]:
@@ -134,7 +144,25 @@ def main_answer():
                     answers.append(opool.submit(get_answers, instance['question'], n=cmdline_args.n))
             answers = [json.dumps(ans.result()) for ans in answers]
             dataset = dataset.add_column('model_predictions', answers)
-            dataset.to_parquet(f'{out_dir}/{freq}/{cmdline_args.subset}.wikilinked.qa.parquet')
+            epoch_str = f'.epoch_{epoch}' if epoch is not None else ''
+            dataset.to_parquet(f'{out_dir}/{freq}/{cmdline_args.subset}.wikilinked.qa{epoch_str}.parquet')
+
+def main_answer_wiki(epoch=None):
+    out_dir = f'generations/memo/fifty_fifty/split{cmdline_args.fold}'
+    os.makedirs(out_dir, exist_ok=True)
+    for split in [cmdline_args.fold]:
+        for freq in tqdm.tqdm(['0_to_1000', '1000_to_10000', '10000_to_100000', '100000_to_inf']):
+            dataset = load_dataset('parquet', data_files=f"data/raw/splits/fifty_fifty/split{split}/{freq}/{cmdline_args.subset}.wikilinked.parquet")['train']
+            answers = []
+            with ThreadPoolExecutor(max_workers=32) as opool:
+                for i in tqdm.tqdm(range(len(dataset))):
+                    instance = dataset[i]
+                    subj = instance['subj']
+                    answers.append(opool.submit(get_answers, f'Try to recollect the wikipedia article on {subj}.', n=cmdline_args.n, system=False))
+            answers = [json.dumps(ans.result()) for ans in answers]
+            dataset = dataset.add_column('model_predictions', answers)
+            epoch_str = f'.epoch_{epoch}' if epoch is not None else ''
+            dataset.to_parquet(f'{out_dir}/{freq}/{cmdline_args.subset}.wikilinked.qa.wiki{epoch_str}.parquet')
 
 def prefixes_up_to_subject(wikis, instance, llm=False):
     res = []
@@ -252,7 +280,7 @@ def main_ref_completion():
         dataset = dataset.add_column('model_completions', answers)
         dataset.to_parquet(f'{out_dir}/{freq}/{cmdline_args.subset}.wikilinked.ref_completions.parquet')
 
-def main_augmented_prediction(ref=False):
+def main_augmented_prediction(ref=False, epoch=None):
     out_dir = f'generations/memo/fifty_fifty/split{cmdline_args.fold}'
     os.makedirs(out_dir, exist_ok=True)
 
@@ -265,6 +293,7 @@ def main_augmented_prediction(ref=False):
                     ans[i][j][k] = a.result()
     completions_name = "completions" if not ref else "ref_completions"
     output_name = "aug" if not ref else "ref_aug"
+    output_name += (f'.epoch_{epoch}' if epoch is not None else '')
     for freq in tqdm.tqdm(['0_to_1000', '1000_to_10000', '10000_to_100000', '100000_to_inf']):
         dataset = load_dataset('parquet', data_files=f"{out_dir}/{freq}/{cmdline_args.subset}.wikilinked.{completions_name}.parquet")['train']
         answers = []
@@ -358,6 +387,7 @@ if __name__ == "__main__":
     parser.add_argument('--subset', default='dev.decon', type=str)
     parser.add_argument('--n', type=int, default=64)
     parser.add_argument('--main_answer', action='store_true')
+    parser.add_argument('--main_answer_wiki', action='store_true')
     parser.add_argument('--main_completion', action='store_true')
     parser.add_argument('--main_ref_completion', action='store_true')
     parser.add_argument('--main_extract_prefix', action='store_true')
@@ -382,7 +412,9 @@ if __name__ == "__main__":
     tokenizer_base = AutoTokenizer.from_pretrained(cmdline_args.base_model_name)
 
     if cmdline_args.main_answer:
-        main_answer()
+        main_answer(epoch=cmdline_args.epoch)
+    if cmdline_args.main_answer_wiki:
+        main_answer_wiki(epoch=cmdline_args.epoch)
     if cmdline_args.main_extract_prefix:
         main_extract_prefix()
     if cmdline_args.main_completion:
@@ -392,6 +424,6 @@ if __name__ == "__main__":
     if cmdline_args.main_augmented_prediction:
         main_augmented_prediction()
     if cmdline_args.main_ref_augmented_prediction:
-        main_augmented_prediction(ref=True)
+        main_augmented_prediction(ref=True, epoch=cmdline_args.epoch)
     if cmdline_args.main_ref_doc_prediction:
         main_doc_augmented_prediction()
